@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IContact } from "../datatypes";
-export const contactSlice = createSlice({
+const contactSlice = createSlice({
     name: "contactSlice",
     initialState: {
         contacts: [
@@ -8,7 +8,6 @@ export const contactSlice = createSlice({
             { id: 2, firstname: "Lixian2", lastname: "Dai", email: "test@", city: "test" },
             { id: 3, firstname: "Lixian3", lastname: "Dai", email: "test@", city: "test" }
         ] as IContact[],
-
         selectedContact: {}
     },
     reducers: {
@@ -20,10 +19,15 @@ export const contactSlice = createSlice({
         },
         selectContact: (state, action: PayloadAction<IContact>) => {
             state.selectedContact = action.payload;
+        },
+        addContact: (state, action: PayloadAction<Omit<IContact, "id">>) => {
+            const { contacts } = state;
+            const id = contacts.length === 0 ? 1 : Math.max(...contacts.map(c => c.id));
+            const contact = { ...action.payload, id: id }
+            state.contacts.push(contact);
         }
     }
 });
 
-
 export default contactSlice.reducer;
-export const { deleteContact, selectContact } = contactSlice.actions;
+export const { deleteContact, selectContact, addContact } = contactSlice.actions;
