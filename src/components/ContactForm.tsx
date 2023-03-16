@@ -1,9 +1,13 @@
-import React, { ChangeEvent, FormEvent, useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { IContact } from "../datatypes";
-import { addContact } from "../redux/contactSlice";
+import { addContact, updateContact } from "../redux/contactSlice";
+import { RootStoreType } from "../redux/store";
 
-function ContactForm() {
+const ContactForm = () => {
+  const { isEditing, selectedContact } = useSelector(
+    (store: RootStoreType) => store.contactReducerState
+  );
   const dispatch = useDispatch();
   const [user, setUser] = useState<Omit<IContact, "id">>({
     firstname: "",
@@ -12,13 +16,25 @@ function ContactForm() {
     city: "",
   });
 
+  useEffect(() => {
+    const { firstname, lastname, email, city } = selectedContact as IContact;
+    setUser({ firstname, lastname, email, city });
+  }, [isEditing, selectedContact]);
+
   const submitHandler = (evt: FormEvent) => {
     evt.preventDefault();
     if (!user.firstname) {
       return;
     }
 
-    dispatch(addContact(user));
+    if (isEditing) {
+      dispatch(
+        updateContact({ ...user, id: (selectedContact as IContact).id })
+      );
+    } else {
+      dispatch(addContact(user));
+    }
+
     setUser({
       firstname: "",
       lastname: "",
@@ -33,7 +49,7 @@ function ContactForm() {
   };
   return (
     <>
-      <h5 className="mt-3 mb-3">New contact</h5>
+      <h5 className="mt-3 mb-3">{isEditing ? "Edit" : "New Contact"}</h5>
       <form onSubmit={submitHandler}>
         <div className="mb-3">
           <label htmlFor="firstname" className="form-label">
@@ -83,11 +99,12 @@ function ContactForm() {
             onChange={changeHandler}
           />
         </div>
-
-        <button className="btn btn-primary">Submit</button>
+        <button className="btn btn-primary">
+          {isEditing ? "Edit" : "Submit"}
+        </button>
       </form>
     </>
   );
-}
+};
 
 export default ContactForm;

@@ -1,5 +1,6 @@
 import React from "react";
 import { Provider } from "react-redux";
+import ContactDetails from "./components/ContactDetails";
 import ContactForm from "./components/ContactForm";
 import ContactList from "./components/ContactList";
 import Header from "./components/Header";
@@ -9,15 +10,19 @@ function App() {
   return (
     <>
       <Provider store={store}>
-        <Header></Header>
-        <div className="row">
-          <div className="col">
-            <ContactList></ContactList>
+        <Header />
+        <div className="container">
+          <div className="row">
+            <div className="col">
+              <ContactList />
+            </div>
+            <div className="col">
+              <ContactDetails />
+            </div>
+            <div className="col">
+              <ContactForm />
+            </div>
           </div>
-          <div className="col">
-            <ContactForm></ContactForm>
-          </div>
-          <div className="col"></div>
         </div>
       </Provider>
     </>
